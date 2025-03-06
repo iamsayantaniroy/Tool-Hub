@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Free online image compression tool. Reduce image size without losing quality. Fully responsive and SEO optimized.">
+    <meta name="keywords" content="image compression, optimize images, image optimizer, compress images online">
+    <meta name="author" content="Sayantani Roy">
+    <title>Image Compression Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        function compressImage() {
+            const fileInput = document.getElementById('imageInput');
+            const compressionLevel = parseFloat(document.getElementById('compressionLevel').value) / 100;
+            const outputCanvas = document.createElement('canvas');
+            const ctx = outputCanvas.getContext('2d');
+            const fileSizeDisplay = document.getElementById('fileSize');
+            
+            if (fileInput.files.length === 0) {
+                alert("Please select an image");
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(event) {
+                const img = new Image();
+                img.crossOrigin = 'Anonymous';
+                
+                img.onload = function() {
+                    outputCanvas.width = img.width;
+                    outputCanvas.height = img.height;
+                    ctx.drawImage(img, 0, 0, img.width, img.height);
+                    
+                    const compressedDataURL = outputCanvas.toDataURL("image/jpeg", compressionLevel);
+                    document.getElementById('outputImage').src = compressedDataURL;
+                    document.getElementById('outputImage').classList.remove('hidden');
+                    
+                    // Calculate and display the compressed file size
+                    const byteCharacters = atob(compressedDataURL.split(',')[1]);
+                    const byteNumbers = new Array(byteCharacters.length);
+                    for (let i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+                    const byteArray = new Uint8Array(byteNumbers);
+                    const compressedSize = (byteArray.length / 1024).toFixed(2); // KB size
+                    fileSizeDisplay.textContent = `Compressed Size: ${compressedSize} KB`;
+                    fileSizeDisplay.classList.remove('hidden');
+                    
+                    const downloadLink = document.getElementById('downloadLink');
+                    downloadLink.href = compressedDataURL;
+                    downloadLink.download = "compressed_image.jpg";
+                    downloadLink.classList.remove('hidden');
+                };
+                img.src = event.target.result;
+            };
+            
+            reader.onerror = function() {
+                alert("Error reading file. Please try again.");
+            };
+            
+            reader.readAsDataURL(file);
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animated { animation: fadeIn 0.5s ease-out; }
+    </style>
+</head>
+<body class="bg-gradient-to-r from-blue-400 to-purple-500 text-white min-h-screen flex items-center justify-center">
+    <div class="container mx-auto p-8 text-center bg-white text-gray-900 rounded-lg shadow-lg animated max-w-md">
+        <h1 class="text-3xl font-bold mb-6">Image Compression Tool</h1>
+        
+        <input type="file" id="imageInput" accept="image/*" class="mb-4 p-2 border rounded w-full">
+        
+        <div class="mb-4">
+            <label for="compressionLevel" class="block mb-2 font-semibold">Compression Level:</label>
+            <input type="range" id="compressionLevel" min="10" max="100" value="80" class="w-full">
+        </div>
+        
+        <button onclick="compressImage()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-all duration-300">Compress</button>
+        
+        <div class="mt-6">
+            <img id="outputImage" class="max-w-full mt-4 border p-2 hidden rounded-lg shadow-md" alt="Compressed Output">
+            <p id="fileSize" class="hidden text-gray-700 mt-2"></p>
+            <a id="downloadLink" class="hidden bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded mt-4 inline-block transition-all duration-300">Download Image</a>
+        </div>
+        
+        <div class="mt-6">
+            <p class="text-sm text-gray-500">Advertisement</p>
+            <div class="border p-4 bg-gray-200 rounded-lg">
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="YOUR-ADSENSE-ID"
+                     data-ad-slot="YOUR-AD-UNIT-ID"
+                     data-ad-format="auto"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
